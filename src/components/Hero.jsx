@@ -120,7 +120,7 @@ export default function Hero() {
               </picture>
 
               <div className="hero-mobile-kicker absolute inset-x-0 bottom-[136px] z-20 flex items-center justify-center gap-1.5 rounded-md border border-cyan-400/60 bg-[#061925]/90 px-2 py-1.5 text-center text-[9px] font-semibold uppercase tracking-wide text-cyan-300 backdrop-blur-sm lg:hidden">
-                <Sparkles className="h-3 w-3 shrink-0" />
+                <Sparkles className="hidden h-3 w-3 shrink-0 lg:block" />
                 <span>Treinamento completo para TikTok Shop</span>
               </div>
 

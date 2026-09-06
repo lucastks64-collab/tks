@@ -1,6 +1,7 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation } from 'swiper/modules';
-import { ArrowRight, Lock, Sparkles } from 'lucide-react';
+import { ArrowRight, ChevronDown, Lock } from 'lucide-react';
+import { useState } from 'react';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { modules } from '../data/content';
@@ -21,11 +22,22 @@ function Checkmark() {
 }
 
 export default function ModulesCarousel() {
+  const [openModules, setOpenModules] = useState(() => new Set());
+
+  const toggleModule = (moduleId) => {
+    setOpenModules((current) => {
+      const next = new Set(current);
+      if (next.has(moduleId)) next.delete(moduleId);
+      else next.add(moduleId);
+      return next;
+    });
+  };
+
   return (
     <section className="modules-section px-5 py-20 sm:px-8" id="modulos">
       <div className="mx-auto max-w-[1480px]">
         <div className="modules-heading">
-          <span className="section-kicker"><Sparkles className="h-4 w-4" /> CONHEÇA OS MÓDULOS</span>
+          <span className="section-kicker">CONHEÇA OS MÓDULOS</span>
           <h2 className="font-display font-black uppercase">O conteúdo que você vai <span className="gradient-text">desbloquear</span></h2>
           <p>Clique em cada módulo e veja um spoiler do que tem dentro.</p>
         </div>
@@ -73,7 +85,21 @@ export default function ModulesCarousel() {
                     </div>
                     <div className="module-details">
                       <h3 className="sr-only">{mod.title}</h3>
-                      <ul>{mod.lessons.slice(0, mod.id === 7 ? 1 : 4).map((lesson) => <li key={lesson}><Checkmark />{lesson}</li>)}</ul>
+                      <ul>{mod.lessons.slice(0, 1).map((lesson) => <li key={lesson}><Checkmark />{lesson}</li>)}</ul>
+                      <div className={`module-spoiler ${openModules.has(mod.id) ? 'is-open' : ''}`}>
+                        <div>
+                          <ul>{mod.lessons.slice(1).map((lesson) => <li key={lesson}><Checkmark />{lesson}</li>)}</ul>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        className="module-more-button"
+                        aria-expanded={openModules.has(mod.id)}
+                        onClick={() => toggleModule(mod.id)}
+                      >
+                        {openModules.has(mod.id) ? 'VER MENOS' : 'VER MAIS'}
+                        <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
+                      </button>
                       {mod.isAdvanced && <strong className="module-more">+ aulas exclusivas</strong>}
                     </div>
                   </article>

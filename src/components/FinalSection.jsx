@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { ArrowRight, Check, ChevronDown, LockKeyhole, ShieldCheck, Zap } from 'lucide-react';
 import { faqs } from '../data/content';
-import cartaoIcon from '../assets/icone/cartao-optimized.webp';
 import kiwifyIcon from '../assets/icone/Kiwify-optimized.webp';
+import masterCardIcon from '../assets/icone/master-card.webp';
 import pixIcon from '../assets/icone/pix-optimized.webp';
+import visaIcon from '../assets/icone/visa.webp';
 
 const benefits = [
   { icon: Zap, label: 'Acesso imediato' },
@@ -79,8 +80,12 @@ export default function FinalSection() {
               </span>
               <span className="hidden text-neutral-600 sm:inline">|</span>
               <span className="inline-flex items-center gap-1 font-semibold text-white">
-                <img src={cartaoIcon} alt="" width="64" height="64" className="h-5 w-5 object-contain" />
-                Cartões
+                <img src={visaIcon} alt="Visa" width="64" height="64" className="h-5 w-auto object-contain" />
+                VISA
+              </span>
+              <span className="inline-flex items-center gap-1 font-semibold text-white">
+                <img src={masterCardIcon} alt="Mastercard" width="64" height="64" className="h-5 w-auto object-contain" />
+                Mastercard
               </span>
               <span className="inline-flex items-center gap-1 font-semibold text-white">
                 <img src={pixIcon} alt="" width="64" height="64" className="h-5 w-5 object-contain" />

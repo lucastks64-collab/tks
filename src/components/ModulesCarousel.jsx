@@ -47,7 +47,7 @@ export default function ModulesCarousel() {
             modules={[Navigation, Autoplay]}
             navigation
             loop
-            autoplay={{ delay: 1800, disableOnInteraction: false, pauseOnMouseEnter: true }}
+            autoplay={{ delay: 3500, disableOnInteraction: true, pauseOnMouseEnter: true }}
             spaceBetween={16}
             slidesPerView={1.15}
             breakpoints={{

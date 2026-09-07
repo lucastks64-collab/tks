@@ -85,7 +85,7 @@ export default function Hero() {
                 <Verified className="h-4 w-4" />
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-bold text-white">+ de R$100.000,00</p>
+                <p className="text-xs font-bold text-white">+ de R$1.000.000,00</p>
                 <p className="text-[10px] text-neutral-400">em comissões na TikTok Shop</p>
               </div>
             </div>
@@ -135,7 +135,7 @@ export default function Hero() {
                   <Verified className="h-4 w-4 sm:h-5 sm:w-5" />
                 </div>
                 <div className="min-w-0">
-                  <p className="font-bold text-white text-xs sm:text-sm">+ de R$100.000,00</p>
+                  <p className="font-bold text-white text-xs sm:text-sm">+ de R$1.000.000,00</p>
                   <p className="text-[10px] sm:text-xs text-neutral-400">em comissões na TikTok Shop</p>
                 </div>
               </div>

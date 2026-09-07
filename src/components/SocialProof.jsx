@@ -23,7 +23,7 @@ export default function SocialProof() {
     <section className="results-section px-5 py-20 sm:px-8" id="resultados">
       <div className="mx-auto max-w-[1480px]">
         <div className="results-heading">
-          <h2 className="font-display font-black uppercase">Resultados reais com a <span className="gradient-text">TikTok Shop</span></h2>
+          <h2 className="font-display font-black uppercase">Resultados reais com o <span className="gradient-text">TikTok Shop</span></h2>
           <p>Resultados reais que eu já conquistei trabalhando com vídeos.</p>
         </div>
 

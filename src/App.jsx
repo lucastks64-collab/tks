@@ -38,6 +38,8 @@ function DeferredSection({ children, minHeight, rootMargin = '650px 0px' }) {
   );
 }
 import instagramIcon from './assets/icone/instagran-optimized.webp';
+import kwaiIcon from './assets/icone/kwai.webp';
+import shopeeIcon from './assets/icone/shoppe.webp';
 import tiktokIcon from './assets/icone/tiktok-optimized.webp';
 import youtubeIcon from './assets/icone/youtube-optimized.webp';
 
@@ -45,6 +47,8 @@ const socialLinks = [
   { label: 'Instagram', href: 'https://www.instagram.com/almeidaoficial016?stkn=eWNxdG05OTMydGt3&utm_source=qr', icon: instagramIcon },
   { label: 'TikTok', href: 'https://www.tiktok.com/@shopdoalmeida', icon: tiktokIcon },
   { label: 'YouTube', href: 'https://youtube.com/@shopdoalmeida?si=MZBLB8xwa387SJ55', icon: youtubeIcon },
+  { label: 'Kwai', href: 'https://k.kwai.com/u/@shopdoalmeida/FCx8Ddgo', icon: kwaiIcon },
+  { label: 'Shopee', href: 'https://br.shp.ee/z8n3yv9z?fromSource=copy_link&smtt=0.0.9', icon: shopeeIcon },
 ];
 
 function App() {

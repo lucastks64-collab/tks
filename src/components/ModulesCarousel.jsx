@@ -1,7 +1,7 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Navigation } from 'swiper/modules';
-import { ArrowRight, ChevronDown, Lock } from 'lucide-react';
-import { useState } from 'react';
+import { Autoplay, FreeMode } from 'swiper/modules';
+import { ArrowRight, ChevronDown, ChevronLeft, ChevronRight, Lock } from 'lucide-react';
+import { useRef, useState } from 'react';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { modules } from '../data/content';
@@ -16,6 +16,22 @@ import module8 from '../assets/carrosel/8-optimized.webp';
 import module9 from '../assets/carrosel/9-optimized.webp';
 
 const moduleImages = { 1: module1, 2: module2, 3: module3, 4: module4, 5: module5, 6: module6, 7: module7, 8: module8, 9: module9 };
+const carouselAutoplay = {
+  delay: 0,
+  disableOnInteraction: true,
+  pauseOnMouseEnter: true,
+  waitForTransition: false,
+};
+const autoScrollSpeed = 7000;
+const manualScrollSpeed = 450;
+const carouselFreeMode = {
+  enabled: true,
+  momentum: true,
+  momentumBounce: false,
+  momentumRatio: 0.75,
+  momentumVelocityRatio: 0.8,
+  sticky: false,
+};
 
 function Checkmark() {
   return <span className="module-check">✓</span>;
@@ -23,6 +39,32 @@ function Checkmark() {
 
 export default function ModulesCarousel() {
   const [openModules, setOpenModules] = useState(() => new Set());
+  const swiperRef = useRef(null);
+  const hasManualControlRef = useRef(false);
+  const takeManualControl = (swiper = swiperRef.current) => {
+    if (!swiper) return;
+    if (!hasManualControlRef.current) {
+      hasManualControlRef.current = true;
+      swiper.el?.classList.add('is-user-controlled');
+    }
+    const currentTranslate = swiper.getTranslate();
+    swiper.autoplay?.stop();
+    swiper.params.speed = manualScrollSpeed;
+    swiper.setTranslate(currentTranslate);
+    swiper.setTransition(0);
+    swiper.updateProgress();
+    swiper.updateActiveIndex();
+    swiper.updateSlidesClasses();
+  };
+  const moveCarousel = (direction, event) => {
+    event?.preventDefault();
+    event?.stopPropagation();
+    const swiper = swiperRef.current;
+    if (!swiper) return;
+    takeManualControl(swiper);
+    const nextIndex = swiper.realIndex + (direction === 'next' ? 1 : -1);
+    swiper.slideToLoop(nextIndex, 700, true);
+  };
 
   const toggleModule = (moduleId) => {
     setOpenModules((current) => {
@@ -43,11 +85,31 @@ export default function ModulesCarousel() {
         </div>
 
         <div className="modules-carousel-wrap">
+          <button type="button" className="carousel-arrow carousel-arrow-prev" aria-label="Módulo anterior" onClick={(event) => moveCarousel('prev', event)}>
+            <ChevronLeft aria-hidden="true" />
+          </button>
           <Swiper
-            modules={[Navigation, Autoplay]}
-            navigation
+            modules={[Autoplay, FreeMode]}
             loop
-            autoplay={{ delay: 3500, disableOnInteraction: true, pauseOnMouseEnter: true }}
+            preventInteractionOnTransition={false}
+            allowTouchMove
+            simulateTouch
+            freeMode={carouselFreeMode}
+            touchStartPreventDefault={false}
+            touchRatio={1}
+            threshold={0}
+            followFinger
+            shortSwipes
+            longSwipes
+            longSwipesRatio={0.15}
+            resistanceRatio={0.35}
+            autoplay={carouselAutoplay}
+            onSwiper={(swiper) => { swiperRef.current = swiper; }}
+            onTouchStart={takeManualControl}
+            onSliderFirstMove={takeManualControl}
+            onDragStart={takeManualControl}
+            onClick={takeManualControl}
+            speed={autoScrollSpeed}
             spaceBetween={16}
             slidesPerView={1.15}
             breakpoints={{
@@ -107,6 +169,9 @@ export default function ModulesCarousel() {
               </SwiperSlide>
             ))}
           </Swiper>
+          <button type="button" className="carousel-arrow carousel-arrow-next" aria-label="Próximo módulo" onClick={(event) => moveCarousel('next', event)}>
+            <ChevronRight aria-hidden="true" />
+          </button>
         </div>
 
         <div className="modules-offer-strip" aria-label="Bônus do treinamento">

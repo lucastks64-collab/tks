@@ -143,11 +143,17 @@ body {
 .modules-heading p { color: var(--color-muted); font-size: 14px; }
 .modules-carousel-wrap { position: relative; padding: 0 22px; }
 .modules-swiper { overflow: visible; }
+.modules-swiper, .results-swiper { touch-action: pan-y; cursor: grab; }
+.modules-swiper:active, .results-swiper:active { cursor: grabbing; }
+.modules-swiper:not(.is-user-controlled) .swiper-wrapper { transition-timing-function: linear !important; }
+.modules-swiper.is-user-controlled .swiper-wrapper { transition-timing-function: ease-out; }
+.results-swiper:not(.is-user-controlled) .swiper-wrapper { transition-timing-function: linear !important; }
+.results-swiper.is-user-controlled .swiper-wrapper { transition-timing-function: ease-out; }
 .modules-swiper .swiper-slide { height: auto; }
-.modules-swiper .swiper-button-prev, .modules-swiper .swiper-button-next { width: 42px; height: 42px; margin-top: -21px; border: 1px solid rgba(255,255,255,.16); border-radius: 999px; color: var(--color-text); background: rgba(10, 12, 16, .94); box-shadow: 0 8px 24px rgba(0,0,0,.35); }
-.modules-swiper .swiper-button-prev { left: -2px; }
-.modules-swiper .swiper-button-next { right: -2px; }
-.modules-swiper .swiper-button-prev::after, .modules-swiper .swiper-button-next::after { font-size: 16px; font-weight: 900; }
+.carousel-arrow { position: absolute; z-index: 10; top: 50%; display: grid; place-items: center; width: 42px; height: 42px; transform: translateY(-50%); border: 1px solid rgba(255,255,255,.16); border-radius: 999px; color: var(--color-text); background: rgba(10, 12, 16, .94); box-shadow: 0 8px 24px rgba(0,0,0,.35); cursor: pointer; }
+.carousel-arrow svg { width: 18px; height: 18px; }
+.carousel-arrow-prev { left: -2px; }
+.carousel-arrow-next { right: -2px; }
 .module-card { min-height: 100%; overflow: hidden; border: 1px solid rgba(255,255,255,.14); border-radius: 8px; background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.012)), #080a0e; box-shadow: 0 16px 34px rgba(0,0,0,.24); }
 @media (hover: hover) {
   .module-card { transition: transform .2s ease; }
@@ -193,10 +199,7 @@ body {
 .results-carousel-wrap { position: relative; padding: 0 26px; }
 .results-swiper { overflow: visible; }
 .results-swiper .swiper-slide { height: auto; }
-.results-swiper .swiper-button-prev, .results-swiper .swiper-button-next { width: 40px; height: 40px; margin-top: -20px; border: 1px solid rgba(255,255,255,.14); border-radius: 999px; color: white; background: rgba(7,10,14,.94); }
-.results-swiper .swiper-button-prev { left: -2px; }
-.results-swiper .swiper-button-next { right: -2px; }
-.results-swiper .swiper-button-prev::after, .results-swiper .swiper-button-next::after { font-size: 15px; font-weight: 900; }
+.results-carousel-wrap .carousel-arrow { color: white; background: rgba(7,10,14,.94); }
 .result-card { overflow: hidden; min-height: 150px; border: 1px solid rgba(255,255,255,.13); border-radius: 8px; background: #0c0e12; box-shadow: 0 14px 30px rgba(0,0,0,.3); }
 .result-card img { display: block; width: 100%; height: auto; object-fit: contain; object-position: center; }
 .results-disclaimer { margin: 20px auto 34px; color: #737d8b; font-size: 11px; text-align: center; }
@@ -236,15 +239,17 @@ body {
   .modules-section { padding-top: 64px; padding-bottom: 64px; }
   .modules-heading { margin-bottom: 24px; }
   .modules-heading h2 { font-size: 2.1rem; }
-  .modules-carousel-wrap { padding: 0 10px; }
-  .modules-swiper .swiper-button-prev, .modules-swiper .swiper-button-next { display: none; }
+  .modules-carousel-wrap { padding: 0; }
+  .modules-carousel-wrap .carousel-arrow { display: none; }
+  .carousel-arrow { width: 34px; height: 34px; }
+  .carousel-arrow svg { width: 15px; height: 15px; }
   .modules-offer-strip { align-items: flex-start; flex-wrap: wrap; margin-top: 24px; }
   .modules-offer-strip p { min-width: 100%; }
   .modules-offer-strip a { width: 100%; justify-content: center; }
   .results-section { padding-top: 64px; padding-bottom: 64px; }
   .results-heading h2 { font-size: 2.1rem; }
   .results-carousel-wrap { padding: 0 10px; }
-  .results-swiper .swiper-button-prev, .results-swiper .swiper-button-next { display: none; }
+  .results-carousel-wrap .carousel-arrow { display: none; }
   .results-disclaimer { margin: 16px auto 24px; line-height: 1.45; }
   .results-benefits { grid-template-columns: 1fr; }
   .result-benefit { min-height: 94px; padding: 17px 14px; border-right: 0; border-bottom: 1px solid rgba(255,255,255,.1); }
@@ -305,6 +310,12 @@ body {
     animation-duration: 2.4s !important;
     animation-iteration-count: infinite !important;
     will-change: transform;
+  }
+
+  /* Keep the requested carousel motion from being collapsed by the global reset. */
+  .modules-swiper:not(.is-user-controlled) .swiper-wrapper,
+  .results-swiper:not(.is-user-controlled) .swiper-wrapper {
+    transition-duration: 7000ms !important;
   }
 }
 

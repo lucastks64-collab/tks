@@ -81,7 +81,10 @@ export default function SocialProof() {
       swiper.el?.classList.remove('is-user-controlled');
       swiper.params.speed = resultAutoScrollSpeed;
       swiper.setTransition(0);
-      ensureAutoScroll(swiper);
+      swiper.loopFix();
+      swiper.autoplay?.stop();
+      if (swiper.autoplay) swiper.autoplay.paused = false;
+      swiper.autoplay?.start();
     }, resultResumeAutoplayDelay);
   };
 

@@ -1,7 +1,7 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, FreeMode } from 'swiper/modules';
+import { FreeMode } from 'swiper/modules';
 import { ChevronLeft, ChevronRight, Gift, ShieldCheck, Zap } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import proof1 from '../assets/proofs/proof-1-optimized.webp';
@@ -14,14 +14,7 @@ import proof6 from '../assets/proofs/proof-6-optimized.webp';
 const proofs = [proof1, proof2, proof3, proof4, proof5, proof6];
 // O loop do Swiper exige pelo menos o dobro dos slides visíveis na maior largura.
 const loopedProofs = [...proofs, ...proofs];
-const resultCarouselAutoplay = {
-  delay: 0,
-  disableOnInteraction: false,
-  pauseOnMouseEnter: false,
-  waitForTransition: true,
-};
 const resultAutoScrollSpeed = 9000;
-const resultManualScrollSpeed = 450;
 const resultResumeAutoplayDelay = 900;
 const resultCarouselFreeMode = {
   enabled: true,
@@ -41,29 +34,32 @@ const benefits = [
 export default function SocialProof() {
   const swiperRef = useRef(null);
   const hasManualControlRef = useRef(false);
+  const autoScrollTimerRef = useRef(null);
   const resumeTimerRef = useRef(null);
-  const lastTranslateRef = useRef(null);
-  const lastMovementAtRef = useRef(0);
 
-  // Etapa 1: mantém o movimento automático linear enquanto não há toque ativo.
-  const ensureAutoScroll = (swiper = swiperRef.current) => {
+  // Etapa 1: cada carrossel agenda seu próximo avanço sem depender do autoplay do Swiper.
+  const startAutoScroll = useCallback(function scheduleAutoScroll(swiper = swiperRef.current) {
     if (!swiper || swiper.destroyed || hasManualControlRef.current) return;
+    window.clearTimeout(autoScrollTimerRef.current);
     swiper.el?.classList.remove('is-user-controlled');
     swiper.params.speed = resultAutoScrollSpeed;
-    if (!swiper.autoplay?.running) swiper.autoplay?.start();
-  };
+    const didMove = swiper.slideNext(resultAutoScrollSpeed, true, true);
+    autoScrollTimerRef.current = window.setTimeout(
+      () => scheduleAutoScroll(swiper),
+      didMove ? resultAutoScrollSpeed + 80 : 180,
+    );
+  }, []);
 
-  // Etapa 2: congela exatamente na posição atual e entrega o arraste ao usuário.
+  // Etapa 2: interrompe só este ciclo e congela na posição exata do toque.
   const takeManualControl = (swiper = swiperRef.current) => {
     if (!swiper) return;
+    window.clearTimeout(autoScrollTimerRef.current);
     window.clearTimeout(resumeTimerRef.current);
     if (!hasManualControlRef.current) {
       hasManualControlRef.current = true;
       swiper.el?.classList.add('is-user-controlled');
     }
     const currentTranslate = swiper.getTranslate();
-    swiper.autoplay?.stop();
-    swiper.params.speed = resultManualScrollSpeed;
     swiper.setTranslate(currentTranslate);
     swiper.setTransition(0);
     swiper.updateProgress();
@@ -71,8 +67,8 @@ export default function SocialProof() {
     swiper.updateSlidesClasses();
   };
 
-  // Etapa 3: depois de soltar, retoma da posição em que o usuário deixou o carrossel.
-  const resumeAutoScroll = (swiper = swiperRef.current) => {
+  // Etapa 3: ao soltar, espera pouco e inicia um novo ciclo da posição atual.
+  const resumeAutoScroll = useCallback((swiper = swiperRef.current) => {
     if (!swiper || !hasManualControlRef.current) return;
     window.clearTimeout(resumeTimerRef.current);
     resumeTimerRef.current = window.setTimeout(() => {
@@ -81,45 +77,14 @@ export default function SocialProof() {
       swiper.el?.classList.remove('is-user-controlled');
       swiper.params.speed = resultAutoScrollSpeed;
       swiper.setTransition(0);
-      swiper.loopFix();
-      swiper.autoplay?.stop();
-      if (swiper.autoplay) swiper.autoplay.paused = false;
-      swiper.autoplay?.start();
+      startAutoScroll(swiper);
     }, resultResumeAutoplayDelay);
-  };
-
-  // Etapa 4: caso o loop perca um ciclo, reinicia somente aquele carrossel.
-  const recoverAutoScroll = () => {
-    const swiper = swiperRef.current;
-    if (!swiper || swiper.destroyed || hasManualControlRef.current || document.hidden) return;
-
-    const translate = swiper.getTranslate();
-    const now = Date.now();
-    if (lastTranslateRef.current === null || Math.abs(translate - lastTranslateRef.current) > 1) {
-      lastTranslateRef.current = translate;
-      lastMovementAtRef.current = now;
-      ensureAutoScroll(swiper);
-      return;
-    }
-
-    if (now - lastMovementAtRef.current > 4500) {
-      swiper.autoplay?.stop();
-      swiper.loopFix();
-      ensureAutoScroll(swiper);
-      lastMovementAtRef.current = now;
-    }
-  };
+  }, [startAutoScroll]);
 
   useEffect(() => {
-    lastMovementAtRef.current = Date.now();
-    const intervalId = window.setInterval(recoverAutoScroll, 1500);
     const handlePointerRelease = () => resumeAutoScroll();
     const handleVisibilityChange = () => {
-      if (!document.hidden) {
-        lastTranslateRef.current = null;
-        lastMovementAtRef.current = Date.now();
-        ensureAutoScroll();
-      }
+      if (!document.hidden && !hasManualControlRef.current) startAutoScroll();
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -127,17 +92,18 @@ export default function SocialProof() {
     window.addEventListener('pointercancel', handlePointerRelease, { passive: true });
     window.addEventListener('touchend', handlePointerRelease, { passive: true });
     window.addEventListener('touchcancel', handlePointerRelease, { passive: true });
+    startAutoScroll();
 
     return () => {
+      window.clearTimeout(autoScrollTimerRef.current);
       window.clearTimeout(resumeTimerRef.current);
-      window.clearInterval(intervalId);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('pointerup', handlePointerRelease);
       window.removeEventListener('pointercancel', handlePointerRelease);
       window.removeEventListener('touchend', handlePointerRelease);
       window.removeEventListener('touchcancel', handlePointerRelease);
     };
-  }, []);
+  }, [resumeAutoScroll, startAutoScroll]);
 
   const moveCarousel = (direction, event) => {
     event?.preventDefault();
@@ -163,7 +129,7 @@ export default function SocialProof() {
             <ChevronLeft aria-hidden="true" />
           </button>
           <Swiper
-            modules={[Autoplay, FreeMode]}
+            modules={[FreeMode]}
             loop
             preventInteractionOnTransition={false}
             allowTouchMove
@@ -177,10 +143,9 @@ export default function SocialProof() {
             longSwipes
             longSwipesRatio={0.15}
             resistanceRatio={0.35}
-            autoplay={resultCarouselAutoplay}
             onSwiper={(swiper) => {
               swiperRef.current = swiper;
-              ensureAutoScroll(swiper);
+              startAutoScroll(swiper);
             }}
             onTouchStart={takeManualControl}
             onSliderFirstMove={takeManualControl}

@@ -160,7 +160,6 @@ export default function ModulesCarousel() {
               swiperRef.current = swiper;
               startAutoScroll(swiper);
             }}
-            onTouchStart={takeManualControl}
             onSliderFirstMove={takeManualControl}
             onDragStart={takeManualControl}
             onTouchEnd={resumeAutoScroll}

@@ -147,7 +147,6 @@ export default function SocialProof() {
               swiperRef.current = swiper;
               startAutoScroll(swiper);
             }}
-            onTouchStart={takeManualControl}
             onSliderFirstMove={takeManualControl}
             onDragStart={takeManualControl}
             onTouchEnd={resumeAutoScroll}

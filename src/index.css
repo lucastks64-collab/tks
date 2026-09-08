@@ -149,14 +149,11 @@ body {
 .modules-heading h2 { max-width: 760px; margin: 12px auto 8px; font-size: clamp(2rem, 4vw, 3.6rem); line-height: 1.02; }
 .modules-heading p { color: var(--color-muted); font-size: 14px; }
 .modules-carousel-wrap { position: relative; padding: 0 22px; }
-.modules-swiper { overflow: visible; }
-.modules-swiper, .results-swiper { touch-action: pan-y; cursor: grab; }
-.modules-swiper:active, .results-swiper:active { cursor: grabbing; }
-.modules-swiper:not(.is-user-controlled) .swiper-wrapper { transition-timing-function: linear !important; }
-.modules-swiper.is-user-controlled .swiper-wrapper { transition-timing-function: ease-out; }
-.results-swiper:not(.is-user-controlled) .swiper-wrapper { transition-timing-function: linear !important; }
-.results-swiper.is-user-controlled .swiper-wrapper { transition-timing-function: ease-out; }
-.modules-swiper .swiper-slide { height: auto; }
+.modules-embla-viewport, .results-embla-viewport { overflow: hidden; touch-action: pan-y; cursor: grab; }
+.modules-embla-viewport:active, .results-embla-viewport:active { cursor: grabbing; }
+.modules-embla-container, .results-embla-container { display: flex; margin-left: -16px; }
+.modules-embla-slide, .results-embla-slide { min-width: 0; padding-left: 16px; }
+.modules-embla-slide { flex: 0 0 86.9565%; }
 .carousel-arrow { position: absolute; z-index: 10; top: 50%; display: grid; place-items: center; width: 42px; height: 42px; transform: translateY(-50%); border: 1px solid rgba(255,255,255,.16); border-radius: 999px; color: var(--color-text); background: rgba(10, 12, 16, .94); box-shadow: 0 8px 24px rgba(0,0,0,.35); cursor: pointer; }
 .carousel-arrow svg { width: 18px; height: 18px; }
 .carousel-arrow-prev { left: -2px; }
@@ -204,8 +201,7 @@ body {
 .results-heading h2 { margin-bottom: 7px; font-size: clamp(2rem, 3.8vw, 3.35rem); line-height: 1.02; }
 .results-heading p { color: var(--color-muted); font-size: 14px; }
 .results-carousel-wrap { position: relative; padding: 0 26px; }
-.results-swiper { overflow: visible; }
-.results-swiper .swiper-slide { height: auto; }
+.results-embla-slide { flex: 0 0 89.2857%; }
 .results-carousel-wrap .carousel-arrow { color: white; background: rgba(7,10,14,.94); }
 .result-card { overflow: hidden; min-height: 150px; border: 1px solid rgba(255,255,255,.13); border-radius: 8px; background: #0c0e12; box-shadow: 0 14px 30px rgba(0,0,0,.3); }
 .result-card img { display: block; width: 100%; height: auto; object-fit: contain; object-position: center; }
@@ -264,6 +260,30 @@ body {
   .result-benefit-icon { width: 50px; height: 50px; }
 }
 
+@media (min-width: 520px) {
+  .modules-embla-slide { flex-basis: 46.5116%; }
+  .results-embla-slide { flex-basis: 47.619%; }
+}
+
+@media (min-width: 760px) {
+  .modules-embla-slide { flex-basis: 31.25%; }
+  .results-embla-slide { flex-basis: 32.2581%; }
+}
+
+@media (min-width: 1080px) {
+  .modules-embla-slide { flex-basis: 23.5294%; }
+  .results-embla-slide { flex-basis: 24.3902%; }
+}
+
+@media (min-width: 1360px) {
+  .modules-embla-slide { flex-basis: 18.8235%; }
+  .results-embla-slide { flex-basis: 20%; }
+}
+
+@media (min-width: 1640px) {
+  .modules-embla-slide { flex-basis: 16.3934%; }
+}
+
 @media (min-width: 1025px) and (max-height: 820px) {
   .hero-section { padding-top: 76px; padding-bottom: 38px; }
   .hero-shell { min-height: 500px; gap: 42px; }
@@ -319,11 +339,6 @@ body {
     will-change: transform;
   }
 
-  /* Keep the requested carousel motion from being collapsed by the global reset. */
-  .modules-swiper:not(.is-user-controlled) .swiper-wrapper,
-  .results-swiper:not(.is-user-controlled) .swiper-wrapper {
-    transition-duration: 7000ms !important;
-  }
 }
 
 /* Safari/WebKit pays a higher rendering cost for large backdrop blurs. */

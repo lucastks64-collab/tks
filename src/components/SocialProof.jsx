@@ -20,7 +20,7 @@ const resultCarouselAutoplay = {
   pauseOnMouseEnter: false,
   waitForTransition: true,
 };
-const resultAutoScrollSpeed = 7000;
+const resultAutoScrollSpeed = 9000;
 const resultManualScrollSpeed = 450;
 const resultResumeAutoplayDelay = 2600;
 const resultCarouselFreeMode = {

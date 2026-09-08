@@ -24,7 +24,7 @@ const carouselAutoplay = {
   pauseOnMouseEnter: false,
   waitForTransition: true,
 };
-const autoScrollSpeed = 7000;
+const autoScrollSpeed = 9000;
 const manualScrollSpeed = 450;
 const resumeAutoplayDelay = 2600;
 const carouselFreeMode = {

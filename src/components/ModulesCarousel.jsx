@@ -51,7 +51,7 @@ export default function ModulesCarousel() {
       <div className="mx-auto max-w-[1480px]">
         <div className="modules-heading">
           <span className="section-kicker">CONHEÇA OS MÓDULOS</span>
-          <h2 className="font-display font-black uppercase">O conteúdo que você vai <span className="gradient-text">desbloquear</span></h2>
+          <h2 className="font-display font-black uppercase">CONHEÇA O QUE VOCÊ VAI APRENDER AO ENTRAR PARA O <span className="gradient-text"> ALGORITMO DE VENDAS TKS</span></h2>
           <p>Clique em cada módulo e veja um spoiler do que tem dentro.</p>
         </div>
 

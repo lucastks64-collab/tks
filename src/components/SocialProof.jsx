@@ -22,7 +22,7 @@ const resultCarouselAutoplay = {
 };
 const resultAutoScrollSpeed = 9000;
 const resultManualScrollSpeed = 450;
-const resultResumeAutoplayDelay = 2600;
+const resultResumeAutoplayDelay = 900;
 const resultCarouselFreeMode = {
   enabled: true,
   momentum: true,
@@ -73,7 +73,7 @@ export default function SocialProof() {
 
   // Etapa 3: depois de soltar, retoma da posição em que o usuário deixou o carrossel.
   const resumeAutoScroll = (swiper = swiperRef.current) => {
-    if (!swiper) return;
+    if (!swiper || !hasManualControlRef.current) return;
     window.clearTimeout(resumeTimerRef.current);
     resumeTimerRef.current = window.setTimeout(() => {
       if (swiper.destroyed) return;
@@ -110,6 +110,7 @@ export default function SocialProof() {
   useEffect(() => {
     lastMovementAtRef.current = Date.now();
     const intervalId = window.setInterval(recoverAutoScroll, 1500);
+    const handlePointerRelease = () => resumeAutoScroll();
     const handleVisibilityChange = () => {
       if (!document.hidden) {
         lastTranslateRef.current = null;
@@ -119,11 +120,19 @@ export default function SocialProof() {
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('pointerup', handlePointerRelease, { passive: true });
+    window.addEventListener('pointercancel', handlePointerRelease, { passive: true });
+    window.addEventListener('touchend', handlePointerRelease, { passive: true });
+    window.addEventListener('touchcancel', handlePointerRelease, { passive: true });
 
     return () => {
       window.clearTimeout(resumeTimerRef.current);
       window.clearInterval(intervalId);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('pointerup', handlePointerRelease);
+      window.removeEventListener('pointercancel', handlePointerRelease);
+      window.removeEventListener('touchend', handlePointerRelease);
+      window.removeEventListener('touchcancel', handlePointerRelease);
     };
   }, []);
 

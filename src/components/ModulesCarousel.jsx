@@ -26,7 +26,7 @@ const carouselAutoplay = {
 };
 const autoScrollSpeed = 9000;
 const manualScrollSpeed = 450;
-const resumeAutoplayDelay = 2600;
+const resumeAutoplayDelay = 900;
 const carouselFreeMode = {
   enabled: true,
   momentum: true,
@@ -76,7 +76,7 @@ export default function ModulesCarousel() {
 
   // Etapa 3: depois de soltar, retoma da posição em que o usuário deixou o carrossel.
   const resumeAutoScroll = (swiper = swiperRef.current) => {
-    if (!swiper) return;
+    if (!swiper || !hasManualControlRef.current) return;
     window.clearTimeout(resumeTimerRef.current);
     resumeTimerRef.current = window.setTimeout(() => {
       if (swiper.destroyed) return;
@@ -113,6 +113,7 @@ export default function ModulesCarousel() {
   useEffect(() => {
     lastMovementAtRef.current = Date.now();
     const intervalId = window.setInterval(recoverAutoScroll, 1500);
+    const handlePointerRelease = () => resumeAutoScroll();
     const handleVisibilityChange = () => {
       if (!document.hidden) {
         lastTranslateRef.current = null;
@@ -122,11 +123,19 @@ export default function ModulesCarousel() {
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('pointerup', handlePointerRelease, { passive: true });
+    window.addEventListener('pointercancel', handlePointerRelease, { passive: true });
+    window.addEventListener('touchend', handlePointerRelease, { passive: true });
+    window.addEventListener('touchcancel', handlePointerRelease, { passive: true });
 
     return () => {
       window.clearTimeout(resumeTimerRef.current);
       window.clearInterval(intervalId);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('pointerup', handlePointerRelease);
+      window.removeEventListener('pointercancel', handlePointerRelease);
+      window.removeEventListener('touchend', handlePointerRelease);
+      window.removeEventListener('touchcancel', handlePointerRelease);
     };
   }, []);
 

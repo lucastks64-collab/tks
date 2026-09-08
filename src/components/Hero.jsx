@@ -80,7 +80,7 @@ export default function Hero() {
               </span>
             </div>
 
-            <div className="hero-mobile-commission mt-5 flex items-center gap-2 rounded-xl border border-cyan-500/30 bg-neutral-900/90 px-3 py-2.5 text-left backdrop-blur-xl lg:hidden">
+            <div className="hero-mobile-commission mx-auto mt-5 flex w-fit items-center gap-2 rounded-xl border border-cyan-500/30 bg-neutral-900/90 px-3 py-2.5 text-left backdrop-blur-xl lg:hidden">
               <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-400">
                 <Verified className="h-4 w-4" />
               </div>

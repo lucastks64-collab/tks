@@ -1,7 +1,7 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, FreeMode } from 'swiper/modules';
 import { ArrowRight, ChevronDown, ChevronLeft, ChevronRight, Lock } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { modules } from '../data/content';
@@ -16,14 +16,17 @@ import module8 from '../assets/carrosel/8-optimized.webp';
 import module9 from '../assets/carrosel/9-optimized.webp';
 
 const moduleImages = { 1: module1, 2: module2, 3: module3, 4: module4, 5: module5, 6: module6, 7: module7, 8: module8, 9: module9 };
+// O loop do Swiper exige pelo menos o dobro dos slides visíveis na maior largura.
+const loopedModules = [...modules, ...modules];
 const carouselAutoplay = {
   delay: 0,
-  disableOnInteraction: true,
-  pauseOnMouseEnter: true,
-  waitForTransition: false,
+  disableOnInteraction: false,
+  pauseOnMouseEnter: false,
+  waitForTransition: true,
 };
 const autoScrollSpeed = 7000;
 const manualScrollSpeed = 450;
+const resumeAutoplayDelay = 2600;
 const carouselFreeMode = {
   enabled: true,
   momentum: true,
@@ -41,8 +44,22 @@ export default function ModulesCarousel() {
   const [openModules, setOpenModules] = useState(() => new Set());
   const swiperRef = useRef(null);
   const hasManualControlRef = useRef(false);
+  const resumeTimerRef = useRef(null);
+  const lastTranslateRef = useRef(null);
+  const lastMovementAtRef = useRef(0);
+
+  // Etapa 1: mantém o movimento automático linear enquanto não há toque ativo.
+  const ensureAutoScroll = (swiper = swiperRef.current) => {
+    if (!swiper || swiper.destroyed || hasManualControlRef.current) return;
+    swiper.el?.classList.remove('is-user-controlled');
+    swiper.params.speed = autoScrollSpeed;
+    if (!swiper.autoplay?.running) swiper.autoplay?.start();
+  };
+
+  // Etapa 2: congela exatamente na posição atual e entrega o arraste ao usuário.
   const takeManualControl = (swiper = swiperRef.current) => {
     if (!swiper) return;
+    window.clearTimeout(resumeTimerRef.current);
     if (!hasManualControlRef.current) {
       hasManualControlRef.current = true;
       swiper.el?.classList.add('is-user-controlled');
@@ -56,6 +73,63 @@ export default function ModulesCarousel() {
     swiper.updateActiveIndex();
     swiper.updateSlidesClasses();
   };
+
+  // Etapa 3: depois de soltar, retoma da posição em que o usuário deixou o carrossel.
+  const resumeAutoScroll = (swiper = swiperRef.current) => {
+    if (!swiper) return;
+    window.clearTimeout(resumeTimerRef.current);
+    resumeTimerRef.current = window.setTimeout(() => {
+      if (swiper.destroyed) return;
+      hasManualControlRef.current = false;
+      swiper.el?.classList.remove('is-user-controlled');
+      swiper.params.speed = autoScrollSpeed;
+      swiper.setTransition(0);
+      ensureAutoScroll(swiper);
+    }, resumeAutoplayDelay);
+  };
+
+  // Etapa 4: caso o loop perca um ciclo, reinicia somente aquele carrossel.
+  const recoverAutoScroll = () => {
+    const swiper = swiperRef.current;
+    if (!swiper || swiper.destroyed || hasManualControlRef.current || document.hidden) return;
+
+    const translate = swiper.getTranslate();
+    const now = Date.now();
+    if (lastTranslateRef.current === null || Math.abs(translate - lastTranslateRef.current) > 1) {
+      lastTranslateRef.current = translate;
+      lastMovementAtRef.current = now;
+      ensureAutoScroll(swiper);
+      return;
+    }
+
+    if (now - lastMovementAtRef.current > 4500) {
+      swiper.autoplay?.stop();
+      swiper.loopFix();
+      ensureAutoScroll(swiper);
+      lastMovementAtRef.current = now;
+    }
+  };
+
+  useEffect(() => {
+    lastMovementAtRef.current = Date.now();
+    const intervalId = window.setInterval(recoverAutoScroll, 1500);
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        lastTranslateRef.current = null;
+        lastMovementAtRef.current = Date.now();
+        ensureAutoScroll();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.clearTimeout(resumeTimerRef.current);
+      window.clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
   const moveCarousel = (direction, event) => {
     event?.preventDefault();
     event?.stopPropagation();
@@ -64,6 +138,7 @@ export default function ModulesCarousel() {
     takeManualControl(swiper);
     const nextIndex = swiper.realIndex + (direction === 'next' ? 1 : -1);
     swiper.slideToLoop(nextIndex, 700, true);
+    resumeAutoScroll(swiper);
   };
 
   const toggleModule = (moduleId) => {
@@ -104,11 +179,16 @@ export default function ModulesCarousel() {
             longSwipesRatio={0.15}
             resistanceRatio={0.35}
             autoplay={carouselAutoplay}
-            onSwiper={(swiper) => { swiperRef.current = swiper; }}
+            onSwiper={(swiper) => {
+              swiperRef.current = swiper;
+              ensureAutoScroll(swiper);
+            }}
             onTouchStart={takeManualControl}
             onSliderFirstMove={takeManualControl}
             onDragStart={takeManualControl}
-            onClick={takeManualControl}
+            onTouchEnd={resumeAutoScroll}
+            onTouchCancel={resumeAutoScroll}
+            onDragEnd={resumeAutoScroll}
             speed={autoScrollSpeed}
             spaceBetween={16}
             slidesPerView={1.15}
@@ -121,8 +201,8 @@ export default function ModulesCarousel() {
             }}
             className="modules-swiper"
           >
-            {modules.map((mod) => (
-              <SwiperSlide key={mod.id}>
+            {loopedModules.map((mod, index) => (
+              <SwiperSlide key={`${mod.id}-${index}`}>
                 {mod.isLocked ? (
                   <div className="module-card module-locked-card">
                     <div className="module-lock-icon"><Lock className="h-7 w-7" /></div>

@@ -86,7 +86,7 @@ export default function Hero() {
               </div>
               <div className="min-w-0">
                 <p className="text-xs font-bold text-white">+ de R$1.000.000,00</p>
-                <p className="text-[10px] text-neutral-400">em comissões na TikTok Shop</p>
+                <p className="text-[10px] text-neutral-400">em comissões no TikTok</p>
               </div>
             </div>
           </div>

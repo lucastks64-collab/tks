@@ -62,10 +62,21 @@ function App() {
       return () => window.cancelIdleCallback(idleId);
     }
 
-    // Safari does not expose requestIdleCallback; wait longer before preloading
-    // below-the-fold chunks so the first screen keeps the connection priority.
-    const timeoutId = window.setTimeout(preloadSections, 2400);
-    return () => window.clearTimeout(timeoutId);
+    let timeoutId;
+    const scheduleAfterLoad = () => {
+      timeoutId = window.setTimeout(preloadSections, 900);
+    };
+
+    if (document.readyState === 'complete') {
+      scheduleAfterLoad();
+      return () => window.clearTimeout(timeoutId);
+    }
+
+    window.addEventListener('load', scheduleAfterLoad, { once: true });
+    return () => {
+      window.removeEventListener('load', scheduleAfterLoad);
+      window.clearTimeout(timeoutId);
+    };
   }, []);
 
   return (

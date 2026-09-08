@@ -19,6 +19,8 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="Curso TikTok Shop Brasil | Algoritmo de Vendas TKS" />
     <meta name="twitter:description" content="Treinamento TikTok Shop para afiliados e iniciantes que querem aprender a vender com vídeos e lives." />
+    <link rel="preload" as="image" href="/src/assets/image/lucas-fade-mobile.webp" type="image/webp" media="(max-width: 1024px)" fetchpriority="high" />
+    <link rel="preload" as="image" href="/src/assets/image/lucas-fade-desktop.webp" type="image/webp" media="(min-width: 1025px)" fetchpriority="high" />
     <title>Curso TikTok Shop Brasil | Algoritmo de Vendas TKS</title>
 
     <script type="application/ld+json">
@@ -45,6 +47,14 @@
           "audienceType": "Iniciantes, criadores e afiliados da TikTok Shop"
         }
       }
+    </script>
+    <script>
+      (() => {
+        const ua = navigator.userAgent;
+        const vendor = navigator.vendor;
+        const isSafari = vendor.includes('Apple') && /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS/.test(ua);
+        if (isSafari) document.documentElement.classList.add('is-safari');
+      })();
     </script>
   </head>
   <body>

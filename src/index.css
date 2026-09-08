@@ -28,6 +28,13 @@ body {
   contain-intrinsic-size: 0 900px;
 }
 
+.is-safari .modules-section,
+.is-safari .results-section,
+.is-safari .final-section {
+  content-visibility: visible;
+  contain-intrinsic-size: auto;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -329,5 +336,23 @@ body {
   .backdrop-blur-xl {
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
+  }
+}
+
+.is-safari .backdrop-blur-sm,
+.is-safari .backdrop-blur-xl {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+@media (max-width: 1024px) {
+  .is-safari .hero-person-image {
+    filter: none;
+  }
+
+  .is-safari .hero-mobile-notification,
+  .is-safari .hero-mobile-commission,
+  .is-safari .hero-mobile-kicker {
+    background-color: rgba(10, 12, 16, .96);
   }
 }

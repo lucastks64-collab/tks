@@ -1,7 +1,7 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, FreeMode } from 'swiper/modules';
 import { ChevronLeft, ChevronRight, Gift, ShieldCheck, Zap } from 'lucide-react';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import proof1 from '../assets/proofs/proof-1-optimized.webp';
@@ -12,14 +12,17 @@ import proof5 from '../assets/proofs/proof-5-optimized.webp';
 import proof6 from '../assets/proofs/proof-6-optimized.webp';
 
 const proofs = [proof1, proof2, proof3, proof4, proof5, proof6];
+// O loop do Swiper exige pelo menos o dobro dos slides visíveis na maior largura.
+const loopedProofs = [...proofs, ...proofs];
 const resultCarouselAutoplay = {
   delay: 0,
-  disableOnInteraction: true,
-  pauseOnMouseEnter: true,
-  waitForTransition: false,
+  disableOnInteraction: false,
+  pauseOnMouseEnter: false,
+  waitForTransition: true,
 };
 const resultAutoScrollSpeed = 7000;
 const resultManualScrollSpeed = 450;
+const resultResumeAutoplayDelay = 2600;
 const resultCarouselFreeMode = {
   enabled: true,
   momentum: true,
@@ -38,8 +41,22 @@ const benefits = [
 export default function SocialProof() {
   const swiperRef = useRef(null);
   const hasManualControlRef = useRef(false);
+  const resumeTimerRef = useRef(null);
+  const lastTranslateRef = useRef(null);
+  const lastMovementAtRef = useRef(0);
+
+  // Etapa 1: mantém o movimento automático linear enquanto não há toque ativo.
+  const ensureAutoScroll = (swiper = swiperRef.current) => {
+    if (!swiper || swiper.destroyed || hasManualControlRef.current) return;
+    swiper.el?.classList.remove('is-user-controlled');
+    swiper.params.speed = resultAutoScrollSpeed;
+    if (!swiper.autoplay?.running) swiper.autoplay?.start();
+  };
+
+  // Etapa 2: congela exatamente na posição atual e entrega o arraste ao usuário.
   const takeManualControl = (swiper = swiperRef.current) => {
     if (!swiper) return;
+    window.clearTimeout(resumeTimerRef.current);
     if (!hasManualControlRef.current) {
       hasManualControlRef.current = true;
       swiper.el?.classList.add('is-user-controlled');
@@ -53,6 +70,63 @@ export default function SocialProof() {
     swiper.updateActiveIndex();
     swiper.updateSlidesClasses();
   };
+
+  // Etapa 3: depois de soltar, retoma da posição em que o usuário deixou o carrossel.
+  const resumeAutoScroll = (swiper = swiperRef.current) => {
+    if (!swiper) return;
+    window.clearTimeout(resumeTimerRef.current);
+    resumeTimerRef.current = window.setTimeout(() => {
+      if (swiper.destroyed) return;
+      hasManualControlRef.current = false;
+      swiper.el?.classList.remove('is-user-controlled');
+      swiper.params.speed = resultAutoScrollSpeed;
+      swiper.setTransition(0);
+      ensureAutoScroll(swiper);
+    }, resultResumeAutoplayDelay);
+  };
+
+  // Etapa 4: caso o loop perca um ciclo, reinicia somente aquele carrossel.
+  const recoverAutoScroll = () => {
+    const swiper = swiperRef.current;
+    if (!swiper || swiper.destroyed || hasManualControlRef.current || document.hidden) return;
+
+    const translate = swiper.getTranslate();
+    const now = Date.now();
+    if (lastTranslateRef.current === null || Math.abs(translate - lastTranslateRef.current) > 1) {
+      lastTranslateRef.current = translate;
+      lastMovementAtRef.current = now;
+      ensureAutoScroll(swiper);
+      return;
+    }
+
+    if (now - lastMovementAtRef.current > 4500) {
+      swiper.autoplay?.stop();
+      swiper.loopFix();
+      ensureAutoScroll(swiper);
+      lastMovementAtRef.current = now;
+    }
+  };
+
+  useEffect(() => {
+    lastMovementAtRef.current = Date.now();
+    const intervalId = window.setInterval(recoverAutoScroll, 1500);
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        lastTranslateRef.current = null;
+        lastMovementAtRef.current = Date.now();
+        ensureAutoScroll();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.clearTimeout(resumeTimerRef.current);
+      window.clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
   const moveCarousel = (direction, event) => {
     event?.preventDefault();
     event?.stopPropagation();
@@ -61,6 +135,7 @@ export default function SocialProof() {
     takeManualControl(swiper);
     const nextIndex = swiper.realIndex + (direction === 'next' ? 1 : -1);
     swiper.slideToLoop(nextIndex, 700, true);
+    resumeAutoScroll(swiper);
   };
 
   return (
@@ -91,11 +166,16 @@ export default function SocialProof() {
             longSwipesRatio={0.15}
             resistanceRatio={0.35}
             autoplay={resultCarouselAutoplay}
-            onSwiper={(swiper) => { swiperRef.current = swiper; }}
+            onSwiper={(swiper) => {
+              swiperRef.current = swiper;
+              ensureAutoScroll(swiper);
+            }}
             onTouchStart={takeManualControl}
             onSliderFirstMove={takeManualControl}
             onDragStart={takeManualControl}
-            onClick={takeManualControl}
+            onTouchEnd={resumeAutoScroll}
+            onTouchCancel={resumeAutoScroll}
+            onDragEnd={resumeAutoScroll}
             speed={resultAutoScrollSpeed}
             spaceBetween={16}
             slidesPerView={1.12}
@@ -107,12 +187,12 @@ export default function SocialProof() {
             }}
             className="results-swiper"
           >
-            {proofs.map((src, index) => (
-              <SwiperSlide key={src}>
+            {loopedProofs.map((src, index) => (
+              <SwiperSlide key={`${src}-${index}`}>
                 <div className="result-card">
                   <img
                     src={src}
-                    alt={`Comissão recebida ${index + 1}`}
+                    alt={`Comissão recebida ${(index % proofs.length) + 1}`}
                     width="420"
                     height="911"
                     loading="lazy"

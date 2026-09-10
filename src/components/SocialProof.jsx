@@ -1,7 +1,7 @@
 import useEmblaCarousel from 'embla-carousel-react';
 import AutoScroll from 'embla-carousel-auto-scroll';
-import { ChevronLeft, ChevronRight, Gift, ShieldCheck, Zap } from 'lucide-react';
-import { useMemo } from 'react';
+import { ChevronLeft, ChevronRight, Gift, ShieldCheck, X, Zap } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import proof1 from '../assets/proofs/proof-1-optimized.webp';
 import proof2 from '../assets/proofs/proof-2-optimized.webp';
 import proof3 from '../assets/proofs/proof-3-optimized.webp';
@@ -10,7 +10,14 @@ import proof5 from '../assets/proofs/proof-5-optimized.webp';
 import proof6 from '../assets/proofs/proof-6-optimized.webp';
 
 const proofs = [proof1, proof2, proof3, proof4, proof5, proof6];
-const loopedProofs = [...proofs, ...proofs];
+const bunnyVideoUrl = 'https://player.mediadelivery.net/play/665166/f508e553-1ee8-41fe-b05f-224450697ac0?autoplay=true&muted=true&loop=true&preload=true';
+const bunnyExpandedVideoUrl = 'https://player.mediadelivery.net/play/665166/f508e553-1ee8-41fe-b05f-224450697ac0?autoplay=true&loop=true';
+const resultItems = [
+  { type: 'video', src: bunnyVideoUrl },
+  ...proofs.map((src) => ({ type: 'image', src })),
+];
+// Keep a single video instance so the carousel does not play it twice at once.
+const loopedResults = [...resultItems, ...proofs.map((src) => ({ type: 'image', src }))];
 const benefits = [
   { icon: Gift, title: 'Bônus exclusivo', text: 'Análise de perfil completa gratuitamente após a compra.', tone: 'cyan' },
   { icon: ShieldCheck, title: '7 dias de garantia', text: 'Conheça o treinamento e decida se ele é para você.', tone: 'cyan' },
@@ -18,6 +25,7 @@ const benefits = [
 ];
 
 export default function SocialProof() {
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
   const autoScroll = useMemo(() => AutoScroll({
     speed: 0.5,
     startDelay: 80,
@@ -33,6 +41,25 @@ export default function SocialProof() {
     loop: true,
   }, [autoScroll]);
 
+  const scrollWithArrow = (direction) => {
+    if (!emblaApi) return;
+
+    emblaApi.plugins().autoScroll?.stop();
+    if (direction === 'prev') emblaApi.scrollPrev(true);
+    else emblaApi.scrollNext(true);
+    requestAnimationFrame(() => emblaApi.plugins().autoScroll?.play());
+  };
+
+  const openVideo = () => {
+    autoScroll.stop();
+    setIsVideoOpen(true);
+  };
+
+  const closeVideo = () => {
+    setIsVideoOpen(false);
+    requestAnimationFrame(() => autoScroll.play());
+  };
+
   return (
     <section className="results-section px-5 py-20 sm:px-8" id="resultados">
       <div className="mx-auto max-w-[1480px]">
@@ -42,24 +69,51 @@ export default function SocialProof() {
         </div>
 
         <div className="results-carousel-wrap">
-          <button type="button" className="carousel-arrow carousel-arrow-prev" aria-label="Resultado anterior" onClick={() => emblaApi?.scrollPrev()}>
+          <button type="button" className="carousel-arrow carousel-arrow-prev" aria-label="Resultado anterior" onClick={() => scrollWithArrow('prev')}>
             <ChevronLeft aria-hidden="true" />
           </button>
           <div className="results-embla-viewport" ref={emblaRef}>
             <div className="results-embla-container">
-              {loopedProofs.map((src, index) => (
-                <div className="results-embla-slide" key={`${src}-${index}`}>
-                  <div className="result-card">
-                    <img src={src} alt={`Comissão recebida ${(index % proofs.length) + 1}`} width="420" height="911" loading="lazy" decoding="async" />
-                  </div>
+              {loopedResults.map((item, index) => (
+                <div className="results-embla-slide" key={`${item.type}-${item.src}-${index}`}>
+                  {item.type === 'video' ? (
+                    <div className="result-card result-video-card">
+                      <iframe
+                        src={item.src}
+                        title="Prévia do vídeo de resultados"
+                        allow="autoplay"
+                      />
+                      <button type="button" className="result-video-trigger" aria-haspopup="dialog" aria-label="Ampliar vídeo de resultados" onClick={openVideo} />
+                    </div>
+                  ) : (
+                    <div className="result-card">
+                      <img src={item.src} alt={`Comissão recebida ${((index - 1) % proofs.length) + 1}`} width="420" height="911" loading="lazy" decoding="async" />
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
           </div>
-          <button type="button" className="carousel-arrow carousel-arrow-next" aria-label="Próximo resultado" onClick={() => emblaApi?.scrollNext()}>
+          <button type="button" className="carousel-arrow carousel-arrow-next" aria-label="Próximo resultado" onClick={() => scrollWithArrow('next')}>
             <ChevronRight aria-hidden="true" />
           </button>
         </div>
+
+        {isVideoOpen && (
+          <div className="video-modal" role="presentation" onClick={closeVideo}>
+            <div className="video-modal-dialog" role="dialog" aria-modal="true" aria-label="Vídeo de resultados" onClick={(event) => event.stopPropagation()}>
+              <button type="button" className="video-modal-close" aria-label="Fechar vídeo" onClick={closeVideo}>
+                <X aria-hidden="true" />
+              </button>
+              <iframe
+                src={bunnyExpandedVideoUrl}
+                title="Resultados reais no TikTok Shop"
+                allow="autoplay; fullscreen; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        )}
 
         <p className="results-disclaimer">* Resultados reais obtidos pelo criador do treinamento. Resultados individuais podem variar.</p>
 

@@ -205,6 +205,14 @@ body {
 .results-carousel-wrap .carousel-arrow { color: white; background: rgba(7,10,14,.94); }
 .result-card { overflow: hidden; min-height: 150px; border: 1px solid rgba(255,255,255,.13); border-radius: 8px; background: #0c0e12; box-shadow: 0 14px 30px rgba(0,0,0,.3); }
 .result-card img { display: block; width: 100%; height: auto; object-fit: contain; object-position: center; }
+.result-video-card { position: relative; aspect-ratio: 420 / 911; }
+.result-video-trigger { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; background: transparent; cursor: pointer; }
+.result-video-card iframe { display: block; width: 100%; height: 100%; border: 0; pointer-events: none; }
+.video-modal { position: fixed; z-index: 60; inset: 0; display: grid; place-items: center; padding: 24px; background: rgba(0,0,0,.8); }
+.video-modal-dialog { position: relative; width: min(90vw, 506px); max-height: 90svh; aspect-ratio: 9 / 16; overflow: hidden; border: 1px solid rgba(255,255,255,.18); border-radius: 8px; background: #000; box-shadow: 0 24px 80px rgba(0,0,0,.55); }
+.video-modal-dialog iframe { display: block; width: 100%; height: 100%; border: 0; }
+.video-modal-close { position: absolute; z-index: 1; top: 10px; right: 10px; display: grid; place-items: center; width: 38px; height: 38px; border: 1px solid rgba(255,255,255,.22); border-radius: 999px; color: #fff; background: rgba(5,7,10,.85); cursor: pointer; }
+.video-modal-close svg { width: 20px; height: 20px; }
 .results-disclaimer { margin: 20px auto 34px; color: #737d8b; font-size: 11px; text-align: center; }
 .results-benefits { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid rgba(255,255,255,.1); border-bottom: 1px solid rgba(255,255,255,.1); }
 .result-benefit { display: flex; align-items: center; gap: 16px; min-height: 116px; padding: 20px 26px; border-right: 1px solid rgba(255,255,255,.1); }
@@ -315,6 +323,7 @@ body {
 }
 
 @media (min-width: 1025px) {
+  .modules-heading h2 { max-width: 1200px; }
   .hero-commission-badge { bottom: 178px; }
 }
 

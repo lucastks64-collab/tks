@@ -37,6 +37,15 @@ export default function ModulesCarousel() {
     loop: true,
   }, [autoScroll]);
 
+  const scrollWithArrow = (direction) => {
+    if (!emblaApi) return;
+
+    emblaApi.plugins().autoScroll?.stop();
+    if (direction === 'prev') emblaApi.scrollPrev(true);
+    else emblaApi.scrollNext(true);
+    requestAnimationFrame(() => emblaApi.plugins().autoScroll?.play());
+  };
+
   const toggleModule = (moduleId) => {
     setOpenModules((current) => {
       const next = new Set(current);
@@ -56,7 +65,7 @@ export default function ModulesCarousel() {
         </div>
 
         <div className="modules-carousel-wrap">
-          <button type="button" className="carousel-arrow carousel-arrow-prev" aria-label="Módulo anterior" onClick={() => emblaApi?.scrollPrev()}>
+          <button type="button" className="carousel-arrow carousel-arrow-prev" aria-label="Módulo anterior" onClick={() => scrollWithArrow('prev')}>
             <ChevronLeft aria-hidden="true" />
           </button>
           <div className="modules-embla-viewport" ref={emblaRef}>
@@ -95,7 +104,7 @@ export default function ModulesCarousel() {
               ))}
             </div>
           </div>
-          <button type="button" className="carousel-arrow carousel-arrow-next" aria-label="Próximo módulo" onClick={() => emblaApi?.scrollNext()}>
+          <button type="button" className="carousel-arrow carousel-arrow-next" aria-label="Próximo módulo" onClick={() => scrollWithArrow('next')}>
             <ChevronRight aria-hidden="true" />
           </button>
         </div>

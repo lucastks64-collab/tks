@@ -11,13 +11,12 @@ import proof6 from '../assets/proofs/proof-6-optimized.webp';
 
 const proofs = [proof1, proof2, proof3, proof4, proof5, proof6];
 const bunnyVideoUrl = 'https://player.mediadelivery.net/play/665166/f508e553-1ee8-41fe-b05f-224450697ac0?autoplay=true&muted=true&loop=true&preload=true';
-const bunnyExpandedVideoUrl = 'https://player.mediadelivery.net/play/665166/f508e553-1ee8-41fe-b05f-224450697ac0?autoplay=true&loop=true';
+const bunnyExpandedVideoUrl = 'https://player.mediadelivery.net/embed/665166/f508e553-1ee8-41fe-b05f-224450697ac0?autoplay=true&loop=true&preload=true&playsinline=true';
 const resultItems = [
-  { type: 'video', src: bunnyVideoUrl },
-  ...proofs.map((src) => ({ type: 'image', src })),
+  { type: 'video', id: 'video' },
+  ...proofs.map((src, proofIndex) => ({ type: 'image', src, proofIndex })),
 ];
-// Keep a single video instance so the carousel does not play it twice at once.
-const loopedResults = [...resultItems, ...proofs.map((src) => ({ type: 'image', src }))];
+const loopedResultItems = [...resultItems, ...resultItems];
 const benefits = [
   { icon: Gift, title: 'Bônus exclusivo', text: 'Análise de perfil completa gratuitamente após a compra.', tone: 'cyan' },
   { icon: ShieldCheck, title: '7 dias de garantia', text: 'Conheça o treinamento e decida se ele é para você.', tone: 'cyan' },
@@ -68,18 +67,29 @@ export default function SocialProof() {
           <p>Resultados reais que eu já conquistei trabalhando com vídeos.</p>
         </div>
 
+        <div className="results-featured-video">
+          <div className="result-card result-video-card">
+            <iframe
+              src={bunnyVideoUrl}
+              title="Prévia do vídeo de resultados"
+              allow="autoplay"
+            />
+            <button type="button" className="result-video-trigger" aria-haspopup="dialog" aria-label="Ampliar vídeo de resultados" onClick={openVideo} />
+          </div>
+        </div>
+
         <div className="results-carousel-wrap">
           <button type="button" className="carousel-arrow carousel-arrow-prev" aria-label="Resultado anterior" onClick={() => scrollWithArrow('prev')}>
             <ChevronLeft aria-hidden="true" />
           </button>
           <div className="results-embla-viewport" ref={emblaRef}>
             <div className="results-embla-container">
-              {loopedResults.map((item, index) => (
-                <div className="results-embla-slide" key={`${item.type}-${item.src}-${index}`}>
+              {loopedResultItems.map((item, index) => (
+                <div className="results-embla-slide" key={`${item.id ?? item.src}-${index}`}>
                   {item.type === 'video' ? (
-                    <div className="result-card result-video-card">
+                    <div className="result-card result-video-card result-video-card-desktop">
                       <iframe
-                        src={item.src}
+                        src={bunnyVideoUrl}
                         title="Prévia do vídeo de resultados"
                         allow="autoplay"
                       />
@@ -87,7 +97,7 @@ export default function SocialProof() {
                     </div>
                   ) : (
                     <div className="result-card">
-                      <img src={item.src} alt={`Comissão recebida ${((index - 1) % proofs.length) + 1}`} width="420" height="911" loading="lazy" decoding="async" />
+                      <img src={item.src} alt={`Comissão recebida ${item.proofIndex + 1}`} width="420" height="911" loading="lazy" decoding="async" />
                     </div>
                   )}
                 </div>

@@ -19,7 +19,7 @@ export default function Hero() {
 
       <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-0 lg:grid-cols-2 lg:gap-12 xl:gap-16">
         {/* Left Content */}
-        <div className="-mt-16 order-2 text-center lg:order-1 lg:mt-0 lg:text-left">
+        <div className="-mt-6 order-2 text-center lg:order-1 lg:mt-0 lg:text-left">
           <div className="mx-auto max-w-2xl lg:mx-0">
             {/* Kicker */}
             <div className="hidden items-center gap-2 text-cyan-400 text-xs sm:text-sm font-medium uppercase tracking-wide lg:flex">
@@ -56,7 +56,7 @@ export default function Hero() {
             {/* CTA Button */}
             <a
               href="https://pay.kiwify.com.br/fxhc0Y8" 
-              className="hero-cta mt-5 group flex items-center justify-center gap-3 rounded-full bg-cyan-400 px-4 py-2 font-semibold text-neutral-950 shadow-[0_0_22px_rgba(0,224,255,0.42)] transition-all sm:px-6 sm:py-2.5"
+              className="hero-cta mt-5 group flex items-center justify-center gap-3 rounded-full bg-cyan-400 px-4 py-2 font-semibold text-neutral-950 shadow-[0_0_22px_rgba(0,224,255,0.42)] transition-all sm:px-6 sm:py-2.5 hover:shadow-[0_0_30px_rgba(0,224,255,0.6)] hover:scale-[1.02]"
             >
               <span className="whitespace-nowrap text-[9px] sm:text-xs">QUERO ENTRAR NO ALGORITMO DE VENDAS TKS</span>
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-neutral-950 text-cyan-300 sm:h-6 sm:w-6">
@@ -65,7 +65,7 @@ export default function Hero() {
             </a>
 
             {/* Trust Badges */}
-            <div className="mt-4 flex flex-nowrap items-center justify-between gap-1 text-[10px] text-neutral-400 sm:gap-6 sm:text-sm">
+            <div className="mt-6 flex flex-nowrap items-center justify-between gap-1 text-[10px] text-neutral-400 sm:mt-4 sm:gap-6 sm:text-sm">
               <span className="flex shrink-0 items-center gap-1 whitespace-nowrap sm:gap-2">
                 <Check className="h-3 w-3 sm:h-4 sm:w-4 text-cyan-400" />
                 Acesso imediato
@@ -80,15 +80,6 @@ export default function Hero() {
               </span>
             </div>
 
-            <div className="hero-mobile-commission mx-auto mt-5 flex w-fit items-center gap-2 rounded-xl border border-cyan-500/30 bg-neutral-900/90 px-3 py-2.5 text-left backdrop-blur-xl lg:hidden">
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-400">
-                <Verified className="h-4 w-4" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-bold text-white">+ de R$1.000.000,00</p>
-                <p className="text-[10px] text-neutral-400">em vendas no TikTok</p>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -119,24 +110,53 @@ export default function Hero() {
                 />
               </picture>
 
-              <div className="hero-mobile-kicker absolute inset-x-0 bottom-[136px] z-20 flex items-center justify-center gap-1.5 rounded-md border border-cyan-400/60 bg-[#061925]/90 px-2 py-1.5 text-center text-[9px] font-semibold uppercase tracking-wide text-cyan-300 backdrop-blur-sm lg:hidden">
+              {/* Mobile Commission Badge */}
+              <div className="hero-mobile-commission absolute bottom-[144px] left-2 right-2 z-30 flex items-center justify-center gap-3 overflow-hidden whitespace-nowrap rounded-xl border border-rose-500/30 bg-gradient-to-br from-neutral-900/95 to-rose-950/30 px-4 py-3 text-left shadow-[0_0_20px_-5px_rgba(34,211,238,0.2),_0_0_24px_-12px_rgba(244,63,94,0.55)] backdrop-blur-xl lg:hidden">
+                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-rose-400/60 to-cyan-400/50" />
+                <div className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-cyan-500/10 ring-1 ring-cyan-500/30">
+                  <div className="absolute inset-0 rounded-full bg-cyan-400/20 blur-sm animate-pulse" />
+                  <Verified className="relative h-4 w-4 text-cyan-300" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-black tracking-tight text-white">
+                    + de <span className="bg-gradient-to-r from-cyan-300 to-cyan-500 bg-clip-text text-transparent">R$1.000.000,00</span>
+                  </p>
+                  <p className="mt-0.5 flex items-center gap-1.5 text-[10px] font-medium text-neutral-400">
+                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)] animate-pulse" />
+                    em vendas no TikTok Shop
+                  </p>
+                </div>
+              </div>
+
+              <div className="hero-mobile-kicker absolute inset-x-0 bottom-[102px] z-20 flex items-center justify-center gap-1.5 rounded-md border border-cyan-400/60 bg-[#061925]/90 px-2 py-1.5 text-center text-[9px] font-semibold uppercase tracking-wide text-cyan-300 backdrop-blur-sm lg:hidden">
                 <Sparkles className="hidden h-3 w-3 shrink-0 lg:block" />
                 <span>Treinamento completo para TikTok Shop</span>
               </div>
 
-              <h1 className="hero-mobile-title absolute inset-x-0 bottom-[62px] z-20 text-center font-display text-[2.05rem] font-black uppercase leading-[0.94] text-white lg:hidden">
+              <h1 className="hero-mobile-title absolute inset-x-0 bottom-[28px] z-20 text-center font-display text-[2.05rem] font-black uppercase leading-[0.94] text-white lg:hidden">
                 ALGORITMO<br />
                 <span>DE <b>VENDAS TKS</b></span>
               </h1>
 
-              {/* Commission Badge */}
-              <div className="hero-commission-badge absolute -bottom-3 sm:-bottom-4 left-3 sm:left-6 right-3 sm:right-6 z-20 hidden items-center gap-2 sm:gap-3 rounded-xl sm:rounded-2xl border border-cyan-500/30 bg-neutral-900/90 px-3 py-2.5 sm:px-5 sm:py-3 backdrop-blur-xl lg:flex">
-                <div className="flex h-7 w-7 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-400 shrink-0">
-                  <Verified className="h-4 w-4 sm:h-5 sm:w-5" />
+              {/* Commission Badge Desktop (Modernizado) */}
+              <div className="hero-commission-badge absolute -bottom-4 sm:-bottom-6 left-3 sm:left-6 right-3 sm:right-6 z-20 hidden lg:flex items-center gap-3 sm:gap-4 overflow-hidden rounded-2xl border border-rose-500/30 bg-gradient-to-br from-neutral-900/95 via-neutral-900/90 to-rose-950/30 px-4 py-3 sm:px-6 sm:py-4 shadow-[0_0_25px_-5px_rgba(34,211,238,0.2),_0_0_30px_-12px_rgba(244,63,94,0.55),_0_10px_30px_-10px_rgba(0,0,0,0.5)] backdrop-blur-xl group">
+                {/* Subtle top highlight */}
+                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-rose-400/60 to-cyan-400/50" />
+                
+                {/* Icon with pulse */}
+                <div className="relative flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-full bg-cyan-500/10 ring-1 ring-cyan-500/30 group-hover:ring-cyan-400/50 transition-all duration-300">
+                  <div className="absolute inset-0 rounded-full bg-cyan-400/20 blur-md animate-pulse" />
+                  <Verified className="relative h-5 w-5 sm:h-6 sm:w-6 text-cyan-300" />
                 </div>
-                <div className="min-w-0">
-                  <p className="font-bold text-white text-xs sm:text-sm">+ de R$1.000.000,00</p>
-                  <p className="text-[10px] sm:text-xs text-neutral-400">em vendas no TikTok Shop</p>
+                
+                <div className="min-w-0 flex-1">
+                  <p className="font-black text-white text-sm sm:text-base tracking-tight leading-tight">
+                    + de <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-cyan-400 to-cyan-500">R$1.000.000,00</span>
+                  </p>
+                  <p className="text-[11px] sm:text-xs font-medium text-neutral-400 mt-1 flex items-center gap-1.5">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)] animate-pulse" />
+                    em vendas validadas no TikTok Shop
+                  </p>
                 </div>
               </div>
             </div>
@@ -146,7 +166,7 @@ export default function Hero() {
               {salesNotifications.slice(0, 2).map((notification, index) => (
                 <div
                   key={index}
-                  className={`hero-mobile-notification group w-[35%] rounded-lg border bg-neutral-950/90 p-1 backdrop-blur-xl ${index === 1 ? 'mt-8' : ''}`}
+                  className={`hero-mobile-notification group w-[35%] rounded-lg border border-white/10 bg-neutral-950/90 p-1.5 backdrop-blur-xl transition-all hover:border-cyan-500/30 ${index === 1 ? 'mt-8' : ''}`}
                 >
                   <div className="mb-0.5 flex items-center gap-1">
                     <div className="flex h-4 w-4 items-center justify-center rounded-full bg-gradient-to-br from-neutral-800 to-neutral-900 shrink-0">
@@ -156,7 +176,7 @@ export default function Hero() {
                     </div>
                     <p className="text-[9px] font-medium text-white">TikTok Shop</p>
                   </div>
-                  <p className="hero-mobile-notification-amount text-[11px] font-bold">{notification.amount}</p>
+                  <p className="hero-mobile-notification-amount text-[11px] font-bold text-emerald-400">{notification.amount}</p>
                 </div>
               ))}
             </div>
@@ -167,7 +187,7 @@ export default function Hero() {
             {salesNotifications.map((notification, index) => (
               <div
                 key={index}
-                className="group rounded-2xl border border-white/10 bg-neutral-900/90 p-4 backdrop-blur-xl transition-all hover:border-cyan-500/30 hover:bg-neutral-800/90"
+                className="group rounded-2xl border border-white/10 bg-neutral-900/90 p-4 backdrop-blur-xl transition-all hover:border-cyan-500/30 hover:bg-neutral-800/90 hover:shadow-[0_0_20px_-5px_rgba(34,211,238,0.15)]"
               >
                 <div className="mb-2 flex items-center gap-2">
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-neutral-800 to-neutral-900 shrink-0">
@@ -182,7 +202,7 @@ export default function Hero() {
                 </div>
                 <div>
                   <p className="text-xs text-neutral-400">Transferência recebida</p>
-                  <p className="text-lg font-bold text-emerald-400">{notification.amount}</p>
+                  <p className="text-lg font-bold text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.4)]">{notification.amount}</p>
                 </div>
               </div>
             ))}
